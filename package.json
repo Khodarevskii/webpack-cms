@@ -1,10 +1,10 @@
 {
   "name": "mesto-project-ff",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
+    "compress-images": "imagemin src/assets/images/* --out-dir=dist/images --plugin=mozjpeg --plugin=pngquant --plugin=gifsicle --plugin=svgo",
+    "build": " webpack  ",
     "dev": "webpack serve",
     "deploy": "gh-pages -d dist",
     "predeploy": "npm run build"
@@ -17,20 +17,34 @@
     "autoprefixer": "^10.4.20",
     "babel-loader": "^9.2.1",
     "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^13.0.1",
     "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.2",
     "cssnano": "^7.0.6",
     "gh-pages": "^6.3.0",
     "html-webpack-plugin": "^5.6.3",
+    "image-minimizer-webpack-plugin": "^4.1.4",
+    "image-webpack-loader": "^8.1.0",
+    "imagemin": "^9.0.1",
+    "imagemin-cli": "^8.0.0",
+    "imagemin-gifsicle": "^7.0.0",
+    "imagemin-mozjpeg": "^10.0.0",
+    "imagemin-optipng": "^8.0.0",
+    "imagemin-pngquant": "^10.0.0",
+    "imagemin-svgo": "^11.0.1",
     "mini-css-extract-plugin": "^2.9.2",
     "postcss-loader": "^8.1.1",
     "sass": "^1.93.2",
     "sass-loader": "^16.0.6",
     "style-loader": "^4.0.0",
+    "terser-webpack-plugin": "^5.3.14",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.1.0"
   },
   "dependencies": {
     "core-js": "^3.39.0"
-  }
+  },
+  "keywords": [],
+  "description": ""
 }
