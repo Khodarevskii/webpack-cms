@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -11,10 +11,12 @@ module.exports = {
     main: './src/scripts/index.js',       
     'content': './src/scripts/content.js',
   },
+  
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'js/[name].js',
-    publicPath: '',
+    publicPath: '/',
+    
   },
   devtool: false,
   devServer: {
@@ -46,12 +48,26 @@ module.exports = {
         }
       },
       {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader'
+        ]
+      },
+      {
         test: /\.s[ac]ss$/i,
         use: [
           MiniCssExtractPlugin.loader,
           "css-loader",
           'postcss-loader',
-          "sass-loader",
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                quietDeps: true,
+              },
+            },
+          },
         ],
       },
       {
@@ -65,9 +81,7 @@ module.exports = {
   },
   optimization: {
     minimize: true,
-    
     runtimeChunk: 'single', 
-    
     splitChunks: {
       chunks: 'all',
       minSize: 0,
@@ -86,22 +100,38 @@ module.exports = {
         },
       },
     },
-    
     minimizer: [
       new TerserPlugin({
+        test: /vendors\.js$/,
         terserOptions: {
-          compress: false,       
-          mangle: false,         
+          compress: {
+            drop_console: true,
+            passes: 2,
+          },
+          mangle: true,
+          keep_classnames: false,
+          keep_fnames: false,
+          format: {
+            comments: false,
+          },
+        },
+        extractComments: false,
+      }),
+      
+      new TerserPlugin({
+        test: /^((?!vendors).)*\.js$/,
+        terserOptions: {
+          compress: false,
+          mangle: false,
           keep_classnames: true,
           keep_fnames: true,
           format: {
-            comments: false,    
+            comments: false,
             beautify: true,
             indent_level: 2,
-            preserve_annotations: true,
           },
         },
-        extractComments: false,  
+        extractComments: false,
       }),
 
       new ImageMinimizerPlugin({
@@ -109,28 +139,23 @@ module.exports = {
           implementation: ImageMinimizerPlugin.sharpMinify,
           options: {
             encodeOptions: {
-
               jpeg: {
                 quality: 85,
                 progressive: true,
               },
-
               png: {
                 quality: 85,
                 compressionLevel: 9,
               },
-
               webp: {
                 quality: 85,
               },
-
               avif: {
                 quality: 80,
               },
             },
           },
         },
-
         generator: [
           {
             preset: 'webp',
@@ -152,7 +177,6 @@ module.exports = {
       template: './src/index.html',
       minify: false
     }),
-    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
     }),
