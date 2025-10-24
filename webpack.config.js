@@ -20,7 +20,9 @@ module.exports = {
   devServer: {
     static: path.resolve(__dirname, './dist'),
     open: true,
-    port: 8080
+    port: 8080,
+    hot: true,
+    liveReload: true,
   },
   module: {
     rules: [
@@ -101,28 +103,47 @@ module.exports = {
         },
         extractComments: false,  
       }),
+
       new ImageMinimizerPlugin({
         minimizer: {
-          implementation: ImageMinimizerPlugin.imageminMinify,
+          implementation: ImageMinimizerPlugin.sharpMinify,
           options: {
-            plugins: [
-              ['mozjpeg', { quality: 85, progressive: true }],
-              ['pngquant', { quality: [0.75, 0.90], speed: 1 }],
-              ['optipng', { optimizationLevel: 7 }],
-              ['gifsicle', { interlaced: true, optimizationLevel: 3 }],
-              ['svgo', {
-                plugins: [
-                  {
-                    name: 'preset-default',
-                    params: {
-                      overrides: { removeViewBox: false },
-                    },
-                  },
-                ],
-              }],
-            ],
+            encodeOptions: {
+
+              jpeg: {
+                quality: 85,
+                progressive: true,
+              },
+
+              png: {
+                quality: 85,
+                compressionLevel: 9,
+              },
+
+              webp: {
+                quality: 85,
+              },
+
+              avif: {
+                quality: 80,
+              },
+            },
           },
         },
+
+        generator: [
+          {
+            preset: 'webp',
+            implementation: ImageMinimizerPlugin.sharpGenerate,
+            options: {
+              encodeOptions: {
+                webp: {
+                  quality: 85,
+                },
+              },
+            },
+          },
+        ],
       }),
     ],
   },
